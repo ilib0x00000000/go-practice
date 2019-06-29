@@ -1,0 +1,42 @@
+syntax = "proto3";
+
+package business.v1;
+
+// 生成协议文件命令
+// # protoc service.proto --go_out=. --twirp_out=.
+
+service Business {
+    rpc Get(GetReq) returns(GetResp);
+    rpc Set(SetReq) returns(SetResp);
+    rpc Del(DelReq) returns(DefaultResp);
+}
+
+message DelReq {
+    int32 id = 1;
+}
+
+message SetReq {
+    string name = 1;
+}
+
+message SetResp {
+    int32 id = 1;
+    DefaultResp data = 2;
+}
+
+message GetReq {
+    int32 id = 1;
+}
+
+message GetResp {
+    int32 id = 1;
+    string name = 2;
+    string time = 3;
+    DefaultResp data = 4;
+}
+
+
+message DefaultResp {
+    int32 code = 1;
+    string msg = 2;
+}
