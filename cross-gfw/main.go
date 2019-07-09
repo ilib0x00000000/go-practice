@@ -3,6 +3,9 @@ package main
 import (
 	"flag"
 	"os"
+
+	"github.com/mholt/certmagic"
+	proxy "remote"
 )
 
 var (
@@ -27,8 +30,26 @@ func main() {
 		os.Exit(1)
 	}
 
+	// 远程代理
 	var err error
-	if localAddr != "" {
+	handler := proxy.NewRemoteProxy()
 
+	if useTLS {
+		certmagic.Default.Email = "ilib0x00000001@gmail.com"
+		certmagic.Default.CA = certmagic.LetsEncryptProductionCA
+
+		ln, err := certmagic.Listen([]string{remoteAddr})
+		if err != nil {
+			panic(err)
+		}
+
+		err = http.Serve(ln.handler)
+	} else {
+		remoteAddr = remoteAddr[strings.LastIndex(remoteAddr, ":"):]
+		err = http.ListenAndServe(remoteAddr, handler)
+	}
+
+	if err != nil {
+		panic(err)
 	}
 }
